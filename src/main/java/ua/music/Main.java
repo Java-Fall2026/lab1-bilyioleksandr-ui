@@ -4,48 +4,48 @@ import ua.music.model.*;
 import ua.music.util.MusicUtils;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println(" 1. Object Creation & Validation");
+        System.out.println(" 1. Record Creation & Component Access");
         Artist artist = new Artist("ART-001", "Daft Punk", "France", 1993);
-        System.out.println("Artist created: " + artist);
+        System.out.println("Artist name: " + artist.stageName() + ", Country: " + artist.country());
 
-        Album album = new Album("UPC-123456789", "Discovery", artist, "ELECTRONIC", LocalDate.of(2001, 3, 12));
-        System.out.println("Album created: " + album);
+        Album album = new Album("UPC-123456789", "Discovery", artist, MusicGenre.ELECTRONIC, LocalDate.of(2001, 3, 12));
+        System.out.println("Album title: " + album.title() + ", Genre: " + album.genre());
 
         Track track = new Track("ISRC-FRZ3", album, "Digital Love", 301, 3);
         System.out.println("Track created: " + track);
 
-        MusicUser user = new MusicUser("  USER@GMAIL.COM ", "Alex", "premium");
-        System.out.println("User created (normalized): " + user);
+        System.out.println("\n 2. Enum Features (values(), custom fields, valueOf exception)");
+        System.out.println("All available genres: " + Arrays.toString(MusicGenre.values()));
+        System.out.println("Popularity multiplier for ELECTRONIC: " + MusicGenre.ELECTRONIC.getPopularityMultiplier());
 
-        PlayListTrack pt = new PlayListTrack(user, track, LocalDate.of(2023, 5, 10));
-        System.out.println("PlaylistTrack created: " + pt);
+        try {
+            MusicGenre.valueOf("ROCKNROLL");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Caught exception for invalid enum value: " + e.getMessage());
+        }
 
-        System.out.println("\n 2. Exception Handling (IllegalArgumentException)");
+        System.out.println("\n 3. Switch Expressions Demonstration");
+        System.out.println("Multiplier from switch for ROCK: " + MusicUtils.getGenreMultiplier(MusicGenre.ROCK));
+        System.out.println("Subscription perk from switch: " + MusicUtils.getSubscriptionPerk("premium"));
+
+        System.out.println("\n 4. Record Validation (IllegalArgumentException)");
         try {
             new Artist("ART-002", "Bad Artist", "USA", 1850);
         } catch (IllegalArgumentException e) {
-            System.out.println("Caught exception (debut year): " + e.getMessage());
+            System.out.println("Caught validation exception (debut year): " + e.getMessage());
         }
 
-        try {
-            album.setGenre("ROCKNROLL");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Caught exception (invalid genre): " + e.getMessage());
-        }
+        System.out.println("\n 5. Record equals() and hashCode()");
+        Artist artistDuplicate = new Artist("ART-001", "Daft Punk", "France", 1993);
+        System.out.println("artist.equals(artistDuplicate): " + artist.equals(artistDuplicate));
+        System.out.println("artist.hashCode() == artistDuplicate.hashCode(): " + (artist.hashCode() == artistDuplicate.hashCode()));
 
-        System.out.println("\n 3. Comparison: == vs equals");
-        Artist artistCopy = new Artist("ART-001", "Daft Punk Duplicate", "France", 1993);
-        System.out.println("artist == artistCopy : " + (artist == artistCopy));
-        System.out.println("artist.equals(artistCopy) : " + artist.equals(artistCopy));
-
-        System.out.println("\n 4. BaseEntity createdAt field");
-        System.out.println("Track creation timestamp: " + track.getCreatedAt());
-
-        System.out.println("\n 5. MusicUtils Calculations");
-        System.out.println("Formatted track duration: " + MusicUtils.formatDuration(track));
-        System.out.println("Album age (years): " + MusicUtils.trackAgeYears(track));
+        System.out.println("\n 6. Generated toString() Output");
+        MusicUser user = new MusicUser("user@gmail.com", "Alex", "premium");
+        System.out.println("User toString: " + user);
     }
 }
